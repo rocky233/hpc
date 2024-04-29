@@ -1,0 +1,213 @@
+#include<iostream>
+#include<stdlib.h>
+#include<omp.h>
+using namespace std;
+void bubble(int *, int);
+void swap(int &, int &);
+void bubble(int *a, int n)
+{
+ for( int i = 0; i < n; i++ )
+ {
+ int first = i % 2;
+ #pragma omp parallel for shared(a,first)
+ for( int j = first; j < n-1; j += 2 )
+ {
+ if( a[ j ] > a[ j+1 ] )
+ {
+ swap( a[ j ], a[ j+1 ] );
+ }
+ }
+ }
+}
+void swap(int &a, int &b)
+{
+ int test;
+ test=a;
+ a=b;
+ b=test;
+}
+int main()
+{
+int *a,n;
+cout<<"\n enter total no of elements=>";
+cin>>n;
+a=new int[n];
+cout<<"\n enter elements=>";
+for(int i=0;i<n;i++)
+{
+cin>>a[i];
+}
+bubble(a,n);
+cout<<"\n sorted array is=>";
+for(int i=0;i<n;i++)
+{
+cout<<a[i]<<endl;
+}
+return 0;
+}
+explain each line
+
+2 / 2
+
+ChatGPT
+Sure, let's break down each line of the code:
+
+cpp
+Copy code
+#include<iostream>
+This line includes the input/output stream library, which provides functionality for input and output operations in C++.
+
+cpp
+Copy code
+#include<stdlib.h>
+This line includes the C Standard Library header file stdlib.h, which declares several general-purpose functions, including memory allocation, process control, conversions, and others.
+
+cpp
+Copy code
+#include<omp.h>
+This line includes the OpenMP header file omp.h, which provides functions and macros for programming with OpenMP (Open Multi-Processing), a widely used API for parallel programming in shared-memory systems.
+
+cpp
+Copy code
+using namespace std;
+This line declares that the code will use the std namespace, which contains standard C++ library functions and objects.
+
+cpp
+Copy code
+void bubble(int *, int);
+This line is a function prototype for the bubble function. It declares a function named bubble that takes an integer pointer (int *) and an integer (int) as arguments and returns void.
+
+cpp
+Copy code
+void swap(int &, int &);
+This line is a function prototype for the swap function. It declares a function named swap that takes two integer references (int &) as arguments and returns void.
+
+cpp
+Copy code
+void bubble(int *a, int n)
+{
+This line starts the definition of the bubble function. It takes an integer array a and an integer n as arguments.
+
+cpp
+Copy code
+for( int i = 0; i < n; i++ )
+{
+This line starts a for loop that iterates over the elements of the array a from index 0 to n-1.
+
+cpp
+Copy code
+int first = i % 2;
+This line calculates the value of first as the remainder of i divided by 2. It alternates between 0 and 1 for even and odd iterations of the outer loop, respectively.
+
+cpp
+Copy code
+#pragma omp parallel for shared(a,first)
+This line is a directive for parallelization using OpenMP. It indicates that the loop following it should be parallelized. The shared(a, first) clause specifies that the variables a and first should be shared among all threads.
+
+cpp
+Copy code
+for( int j = first; j < n-1; j += 2 )
+{
+This line starts a nested for loop that iterates over the elements of the array a starting from the value of first (either 0 or 1) and incrementing by 2 in each iteration until n-2.
+
+cpp
+Copy code
+if( a[ j ] > a[ j+1 ] )
+{
+This line checks if the current element of the array a is greater than the next element.
+
+cpp
+Copy code
+swap( a[ j ], a[ j+1 ] );
+This line calls the swap function to exchange the values of the current element and the next element if the condition in the previous line is true.
+
+cpp
+Copy code
+}
+}
+These lines close the nested for loop and the outer for loop, respectively, ending the definition of the bubble function.
+
+cpp
+Copy code
+void swap(int &a, int &b)
+{
+This line starts the definition of the swap function, which takes two integer references a and b as arguments.
+
+cpp
+Copy code
+int test;
+This line declares an integer variable named test.
+
+cpp
+Copy code
+test=a;
+a=b;
+b=test;
+These lines swap the values of the integer references a and b using a temporary variable test.
+
+cpp
+Copy code
+}
+This line closes the definition of the swap function.
+
+cpp
+Copy code
+int main()
+{
+This line starts the definition of the main function, which is the entry point of the program.
+
+cpp
+Copy code
+int *a,n;
+This line declares an integer pointer a and an integer n.
+
+cpp
+Copy code
+cout<<"\n enter total no of elements=>";
+This line outputs a prompt asking the user to enter the total number of elements.
+
+cpp
+Copy code
+cin>>n;
+This line reads the input from the user and stores it in the variable n.
+
+cpp
+Copy code
+a=new int[n];
+This line dynamically allocates memory for an integer array of size n and assigns its address to the pointer a.
+
+cpp
+Copy code
+cout<<"\n enter elements=>";
+This line outputs a prompt asking the user to enter the elements of the array.
+
+cpp
+Copy code
+for(int i=0;i<n;i++)
+{
+cin>>a[i];
+}
+This for loop reads the elements entered by the user and stores them in the dynamically allocated array a.
+
+cpp
+Copy code
+bubble(a,n);
+This line calls the bubble function to sort the array a.
+
+cpp
+Copy code
+cout<<"\n sorted array is=>";
+This line outputs a prompt indicating that the sorted array will be displayed next.
+
+cpp
+Copy code
+for(int i=0;i<n;i++)
+{
+cout<<a[i]<<endl;
+}
+This for loop iterates over the elements of the sorted array a and outputs each element followed by a newline character.
+
+cpp
+Copy code
+return 0;
+This line indicates successful termination of the main function and the program. It returns 0 to the operating system, indicating that the program executed successfully.
