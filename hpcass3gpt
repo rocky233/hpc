@@ -1,0 +1,153 @@
+
+#include <iostream>
+//#include <vector>
+#include <omp.h>
+#include <climits>
+using namespace std;
+void min_reduction(int arr[], int n) {
+int min_value = INT_MAX;
+#pragma omp parallel for reduction(min: min_value)
+for (int i = 0; i < n; i++) {
+if (arr[i] < min_value) {
+min_value = arr[i];
+}
+}
+cout << "Minimum value: " << min_value << endl;
+}
+void max_reduction(int arr[], int n) {
+int max_value = INT_MIN;
+#pragma omp parallel for reduction(max: max_value)
+for (int i = 0; i < n; i++) {
+if (arr[i] > max_value) {
+max_value = arr[i];
+}
+}
+cout << "Maximum value: " << max_value << endl;
+}
+void sum_reduction(int arr[], int n) {
+int sum = 0;
+#pragma omp parallel for reduction(+: sum)
+for (int i = 0; i < n; i++) {
+sum += arr[i];
+}
+cout << "Sum: " << sum << endl;
+}
+void average_reduction(int arr[], int n) {
+int sum = 0;
+#pragma omp parallel for reduction(+: sum)
+for (int i = 0; i < n; i++) {
+sum += arr[i];
+}
+cout << "Average: " << (double)sum / (n-1) << endl;
+}
+int main() {
+int *arr,n;
+cout<<"\n enter total no of elements=>";
+cin>>n;
+arr=new int[n];
+cout<<"\n enter elements=>";
+for(int i=0;i<n;i++)
+{
+cin>>arr[i];
+}
+// int arr[] = {5, 2, 9, 1, 7, 6, 8, 3, 4};
+// int n = size(arr);
+min_reduction(arr, n);
+max_reduction(arr, n);
+sum_reduction(arr, n);
+average_reduction(arr, n);
+}
+explain each line till end 
+
+7 / 7
+
+ChatGPT
+Sure, let's go through the code line by line:
+
+cpp
+Copy code
+#include <iostream>
+//#include <vector>
+#include <omp.h>
+#include <climits>
+using namespace std;
+This section includes the necessary header files for the program.
+iostream: For input and output operations.
+omp.h: OpenMP header file, which is used for parallel programming.
+climits: Header file that contains constants for minimum and maximum values of various data types.
+using namespace std;: This line is a directive that tells the compiler to use the std namespace, which includes the standard C++ library.
+cpp
+Copy code
+void min_reduction(int arr[], int n) {
+This line defines a function min_reduction that takes an integer array arr and its size n as parameters.
+cpp
+Copy code
+int min_value = INT_MAX;
+This declares an integer variable min_value and initializes it with the maximum possible integer value using INT_MAX constant from climits.
+cpp
+Copy code
+#pragma omp parallel for reduction(min: min_value)
+This line is a compiler directive that tells the compiler to parallelize the loop using OpenMP (#pragma omp parallel for) and perform a reduction operation on the min_value variable. In this case, it's reducing across threads and finding the minimum value (reduction(min: min_value)).
+cpp
+Copy code
+for (int i = 0; i < n; i++) {
+This line starts a loop that iterates over the elements of the array arr.
+cpp
+Copy code
+if (arr[i] < min_value) {
+min_value = arr[i];
+}
+Inside the loop, it checks if the current element of the array is less than the current minimum value. If so, it updates the minimum value.
+cpp
+Copy code
+cout << "Minimum value: " << min_value << endl;
+}
+Finally, outside the loop and function, it prints the minimum value found in the array.
+Similarly, the other functions (max_reduction, sum_reduction, average_reduction) follow a similar structure but with different reduction operations (max, sum, and sum for average calculation).
+
+The main() function:
+
+cpp
+Copy code
+int main() {
+The entry point of the program.
+cpp
+Copy code
+int *arr,n;
+Declares a pointer arr to an integer and an integer variable n.
+cpp
+Copy code
+cout<<"\n enter total no of elements=>";
+cin>>n;
+Asks the user to enter the total number of elements and reads it from the standard input.
+cpp
+Copy code
+arr=new int[n];
+Allocates memory dynamically for the integer array arr based on the user input.
+cpp
+Copy code
+cout<<"\n enter elements=>";
+for(int i=0;i<n;i++)
+{
+cin>>arr[i];
+}
+Asks the user to enter the elements of the array and reads them from the standard input.
+cpp
+Copy code
+// int arr[] = {5, 2, 9, 1, 7, 6, 8, 3, 4};
+// int n = size(arr);
+These lines are commented out. They show an alternative way to initialize the array and its size if you don't want to take input from the user.
+cpp
+Copy code
+min_reduction(arr, n);
+max_reduction(arr, n);
+sum_reduction(arr, n);
+average_reduction(arr, n);
+Calls the functions to find the minimum, maximum, sum, and average of the elements in the array.
+cpp
+Copy code
+}
+Marks the end of the main() function and the end of the program.
+
+
+
