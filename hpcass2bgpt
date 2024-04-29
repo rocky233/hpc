@@ -1,0 +1,151 @@
+#include<stdio.h>
+#include<omp.h>
+void merge(int array[],int low,int mid,int high)
+{
+int temp[30];
+int i,j,k,m;
+j=low;
+m=mid+1;
+for(i=low; j<=mid && m<=high ; i++)
+{
+if(array[j]<=array[m])
+{
+temp[i]=array[j];
+j++;
+}
+else
+{
+temp[i]=array[m];
+m++;
+}
+}
+if(j>mid)
+{
+for(k=m; k<=high; k++)
+{
+temp[i]=array[k];
+i++;
+}
+}
+else
+{
+for(k=j; k<=mid; k++)
+{
+temp[i]=array[k];
+i++;
+}
+}
+for(k=low; k<=high; k++)
+array[k]=temp[k];
+}
+void mergesort(int array[],int low,int high)
+{
+int mid;
+if(low<high)
+{
+mid=(low+high)/2;
+#pragma omp parallel sections num_threads(2)
+{
+#pragma omp section
+{
+mergesort(array,low,mid);
+}
+#pragma omp section
+{
+mergesort(array,mid+1,high);
+}
+}
+merge(array,low,mid,high);
+}
+}
+int main()
+{
+int array[50];
+int i,size;
+printf("Enter total no. of elements:\n");
+scanf("%d",&size);
+printf("Enter %d elements:\n",size);
+for(i=0; i<size; i++)
+{
+scanf("%d",&array[i]);
+}
+mergesort(array,0,size-1);
+printf("Sorted Elements as follows:\n");
+for(i=0; i<size; i++)
+printf("%d ",array[i]);
+printf("\n");
+return 0;
+}
+explain whole program till end
+
+4 / 4
+
+ChatGPT
+This program is an implementation of parallel merge sort using OpenMP, which is a library for parallel programming in C/C++. Let's break down the program step by step:
+
+Header Files:
+c
+Copy code
+#include<stdio.h>
+#include<omp.h>
+These are the standard header files in C. <stdio.h> is for input and output operations, and <omp.h> is for OpenMP directives and functions.
+Function Prototypes:
+c
+Copy code
+void merge(int array[],int low,int mid,int high);
+void mergesort(int array[],int low,int high);
+These are function prototypes. They declare functions merge and mergesort before they are defined. This allows the compiler to know the signatures of these functions before they are actually used.
+Merge Function:
+c
+Copy code
+void merge(int array[],int low,int mid,int high)
+This function merges two sorted arrays array[low...mid] and array[mid+1...high] into a single sorted array array[low...high].
+Mergesort Function:
+c
+Copy code
+void mergesort(int array[],int low,int high)
+This function performs the merge sort algorithm recursively. It divides the array into two halves, sorts the two halves independently, and then merges the sorted halves.
+Main Function:
+c
+Copy code
+int main()
+This is the entry point of the program.
+Variable Declarations:
+c
+Copy code
+int array[50];
+int i,size;
+array[50]: Array to store the elements to be sorted.
+i: Loop variable.
+size: Number of elements in the array.
+Input:
+c
+Copy code
+printf("Enter total no. of elements:\n");
+scanf("%d",&size);
+printf("Enter %d elements:\n",size);
+for(i=0; i<size; i++)
+{
+    scanf("%d",&array[i]);
+}
+Prompts the user to input the number of elements and then the elements themselves.
+It reads the elements into the array.
+Parallel Mergesort Call:
+c
+Copy code
+mergesort(array,0,size-1);
+Calls the mergesort function to sort the array. This initiates the parallel execution of merge sort.
+Output:
+c
+Copy code
+printf("Sorted Elements as follows:\n");
+for(i=0; i<size; i++)
+    printf("%d ",array[i]);
+printf("\n");
+Prints the sorted elements after merge sort.
+Return Statement:
+c
+Copy code
+return 0;
+Indicates successful execution of the program.
+Overall, this program implements the parallel merge sort algorithm using OpenMP to take advantage of multicore processors for faster sorting.
