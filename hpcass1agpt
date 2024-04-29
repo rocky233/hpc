@@ -1,0 +1,310 @@
+#include<iostream>
+#include<stdlib.h>
+#include<queue>
+using namespace std;
+class node
+{
+ public:
+
+ node *left, *right;
+ int data;
+};
+class Breadthfs
+{
+
+public:
+
+node *insert(node *, int);
+void bfs(node *);
+
+};
+node *insert(node *root, int data)
+// inserts a node in tree
+{
+ if(!root)
+ {
+
+ root=new node;
+ root->left=NULL;
+ root->right=NULL;
+ root->data=data;
+ return root;
+ }
+ queue<node *> q;
+ q.push(root);
+
+ while(!q.empty())
+ {
+ node *temp=q.front();
+ q.pop();
+
+ if(temp->left==NULL)
+ {
+
+ temp->left=new node;
+ temp->left->left=NULL;
+ temp->left->right=NULL;
+ temp->left->data=data;
+ return root;
+ }
+ else
+ {
+ q.push(temp->left);
+ }
+ if(temp->right==NULL)
+ {
+
+ temp->right=new node;
+ temp->right->left=NULL;
+ temp->right->right=NULL;
+ temp->right->data=data;
+ return root;
+ }
+ else
+ {
+ q.push(temp->right);
+ }
+ }
+
+}
+void bfs(node *head)
+{
+ queue<node*> q;
+ q.push(head);
+
+ int qSize;
+
+ while (!q.empty())
+ {
+ qSize = q.size();
+ #pragma omp parallel for
+ //creates parallel threads
+ for (int i = 0; i < qSize; i++)
+ {
+ node* currNode;
+ #pragma omp critical
+ {
+ currNode = q.front();
+ q.pop();
+ cout<<"\t"<<currNode->data;
+
+ }// prints parent node
+ #pragma omp critical
+ {
+ if(currNode->left)// push parent's left node in queue
+ q.push(currNode->left);
+ if(currNode->right)
+ q.push(currNode->right);
+ }// push parent's right node in queue
+ }
+ }
+}
+int main(){
+ node *root=NULL;
+ int data;
+ char ans;
+
+ do
+ {
+ cout<<"\n enter data=>";
+ cin>>data;
+
+ root=insert(root,data);
+
+ cout<<"do you want insert one more node?";
+ cin>>ans;
+
+ }while(ans=='y'||ans=='Y');
+
+ bfs(root);
+
+ return 0;
+}
+explain each line 
+ChatGPT
+Sure, let's break down the code line by line:
+
+cpp
+Copy code
+#include<iostream>
+This line includes the input/output stream library which allows the program to perform input and output operations.
+
+cpp
+Copy code
+#include<stdlib.h>
+This line includes the C standard library header <stdlib.h> which provides functions such as memory allocation, process control, conversions, and others.
+
+cpp
+Copy code
+#include<queue>
+This line includes the standard template library (STL) header <queue> which provides a template class queue that represents a first-in, first-out (FIFO) data structure.
+
+cpp
+Copy code
+using namespace std;
+This line declares that the program is using the std namespace, which includes many standard C++ functions and objects.
+
+cpp
+Copy code
+class node
+{
+ public:
+ node *left, *right;
+ int data;
+};
+This defines a class named node which represents a node in a binary tree. It has three member variables: left and right, which are pointers to the left and right child nodes respectively, and data, which stores the data value of the node.
+
+cpp
+Copy code
+class Breadthfs
+{
+public:
+ node *insert(node *, int);
+ void bfs(node *);
+};
+This defines a class named Breadthfs which contains two public member functions: insert for inserting a node into a binary tree, and bfs for performing breadth-first traversal on the binary tree.
+
+cpp
+Copy code
+node *insert(node *root, int data)
+This is the definition of the insert function which takes a pointer to the root node of a binary tree and an integer data value to be inserted. It returns a pointer to the root node of the modified binary tree.
+
+cpp
+Copy code
+{
+ if(!root)
+ {
+  root=new node;
+  root->left=NULL;
+  root->right=NULL;
+  root->data=data;
+  return root;
+ }
+This part of the insert function checks if the root node is null. If it is null, meaning the tree is empty, it creates a new node, assigns the data value to it, and returns the root node.
+
+cpp
+Copy code
+ queue<node *> q;
+ q.push(root);
+This part of the insert function initializes a queue of node pointers and pushes the root node onto the queue.
+
+cpp
+Copy code
+ while(!q.empty())
+ {
+  node *temp=q.front();
+  q.pop();
+This part of the insert function dequeues a node from the front of the queue and stores it in a temporary pointer variable temp.
+
+cpp
+Copy code
+  if(temp->left==NULL)
+  {
+   temp->left=new node;
+   temp->left->left=NULL;
+   temp->left->right=NULL;
+   temp->left->data=data;
+   return root;
+  }
+  else
+  {
+   q.push(temp->left);
+  }
+This part of the insert function checks if the left child of the current node temp is null. If it is null, it creates a new node as the left child and assigns the data value to it. Otherwise, it pushes the left child onto the queue.
+
+cpp
+Copy code
+  if(temp->right==NULL)
+  {
+   temp->right=new node;
+   temp->right->left=NULL;
+   temp->right->right=NULL;
+   temp->right->data=data;
+   return root;
+  }
+  else
+  {
+   q.push(temp->right);
+  }
+ }
+}
+This part of the insert function is similar to the previous part but deals with the right child of the current node temp.
+
+cpp
+Copy code
+void bfs(node *head)
+This is the definition of the bfs function which takes a pointer to the root node of a binary tree and performs breadth-first traversal on it.
+
+cpp
+Copy code
+ queue<node*> q;
+ q.push(head);
+This part of the bfs function initializes a queue of node pointers and pushes the root node onto the queue.
+
+cpp
+Copy code
+ int qSize;
+ while (!q.empty())
+ {
+  qSize = q.size();
+This part of the bfs function initializes a variable qSize to store the size of the queue and enters a loop which continues until the queue is empty.
+
+cpp
+Copy code
+  #pragma omp parallel for
+This line is a pragma directive that enables OpenMP parallelization for the following loop.
+
+cpp
+Copy code
+  for (int i = 0; i < qSize; i++)
+  {
+   node* currNode;
+   #pragma omp critical
+   {
+    currNode = q.front();
+    q.pop();
+    cout<<"\t"<<currNode->data;
+   }
+This part of the bfs function dequeues a node from the front of the queue, stores it in a variable currNode, prints its data value, and then enters a critical section to ensure that only one thread accesses the queue at a time.
+
+cpp
+Copy code
+   #pragma omp critical
+   {
+    if(currNode->left)
+     q.push(currNode->left);
+    if(currNode->right)
+     q.push(currNode->right);
+   }
+  }
+ }
+}
+This part of the bfs function, still within the parallelized loop, checks if the dequeued node has left and right children. If they exist, they are pushed onto the queue.
+
+cpp
+Copy code
+int main(){
+ node *root=NULL;
+ int data;
+ char ans;
+
+ do
+ {
+  cout<<"\n enter data=>";
+  cin>>data;
+  root=insert(root,data);
+  cout<<"do you want insert one more node?";
+  cin>>ans;
+ }while(ans=='y'||ans=='Y');
+
+ bfs(root);
+
+ return 0;
+}
+This is the main function which initializes the root node as null, prompts the user to enter data for the binary tree nodes, inserts nodes into the binary tree using the insert function, and then performs breadth-first traversal on the binary tree using the bfs function. The loop continues until the user chooses not to insert more nodes.
+
+
+
+
+
+v
